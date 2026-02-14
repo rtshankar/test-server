@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, Request, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from .database import Base, engine, SessionLocal
 from .models import (
@@ -81,6 +81,32 @@ async def shutdown():
 # =====================================================
 # ---------------- PUBLIC ENDPOINT -------------------
 # =====================================================
+
+@app.get("/health")
+async def health_check(db: Session = Depends(get_db)):
+    try:
+        # Check database connection
+        db.execute(text("SELECT 1"))
+
+        # Check scheduler state
+        scheduler_running = scheduler.running
+
+        return {
+            "status": "healthy",
+            "service": SERVICE_NAME,
+            "database": "connected",
+            "scheduler_running": scheduler_running,
+            "timestamp": datetime.utcnow()
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "status": "unhealthy",
+                "error": str(e)
+            }
+        )
 
 @app.get("/api/v1/public/summary")
 async def public_summary(db: Session = Depends(get_db)):
