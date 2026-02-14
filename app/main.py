@@ -4,16 +4,16 @@ from fastapi import FastAPI, Request, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, text
 
-from .database import Base, engine, SessionLocal
+from app.database import Base, engine, SessionLocal
 from .models import (
     Facility,
     HVACStatus,
     SnapshotExecution,
     FacilityMetric
 )
-from .config import SERVICE_NAME, FACILITY_SEED
-from .auth import authenticate
-from .scheduler import (
+from app.config import SERVICE_NAME, FACILITY_SEED
+from app.auth import authenticate
+from scheduler import (
     start_scheduler,
     pause_scheduler,
     resume_scheduler,

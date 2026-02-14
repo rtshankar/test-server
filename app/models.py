@@ -3,8 +3,7 @@ from sqlalchemy import (
     DateTime, Boolean, ForeignKey,
     Index, func
 )
-from sqlalchemy.orm import relationship
-from .database import Base
+from app.database import Base
 
 
 class Facility(Base):
